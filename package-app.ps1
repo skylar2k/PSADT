@@ -1,5 +1,4 @@
 #Requires -modules PSFzf
-
 Function Read-YesNoChoice {
     Param (
         [Parameter(Mandatory = $true)][String]$Title,
@@ -24,7 +23,7 @@ sops.exe --config "~/.sops.yaml" decrypt .\tmp_pkg\SupportFiles\secrets.sops.jso
 Remove-Item .\tmp_pkg\SupportFiles\secrets.sops.json
 
 # Package application if wanted
-if (Read-YesNoChoice -Title "Package to IntuneWin?" -Message "Yes or No?" -DefaultOption 0) {
+if (Read-YesNoChoice -Title "Package to IntuneWin?" -Message "Yes or No?") {
     $PkgOutName = "$(Split-Path $PkgApexPath -Leaf)-$(Split-Path $PkgVersionPath -Leaf).intunewin"
     IntuneWinAppUtil -c (Resolve-Path tmp_pkg).Path -s Deploy-Application.exe -o "IntuneOut" -q
     Move-Item ".\IntuneOut\Deploy-Application.intunewin" ".\IntuneOut\$PkgOutName" -Force
