@@ -1,4 +1,6 @@
 **/Files/*
+tmp_pkg/
+IntuneOut/
 
 !**/.keep
 !TEMPLATE/**
