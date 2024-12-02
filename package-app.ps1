@@ -27,7 +27,7 @@ Remove-Item .\tmp_pkg\SupportFiles\secrets.sops.json
 if (Read-YesNoChoice -Title "Package to IntuneWin?" -Message "Yes or No?" -DefaultOption 0) {
     $PkgOutName = "$(Split-Path $PkgApexPath -Leaf)-$(Split-Path $PkgVersionPath -Leaf).intunewin"
     IntuneWinAppUtil -c (Resolve-Path tmp_pkg).Path -s Deploy-Application.exe -o "IntuneOut" -q
-    Move-Item ".\IntuneOut\Deploy-Application.intunewin" ".\IntuneOut\$PkgOutName"
+    Move-Item ".\IntuneOut\Deploy-Application.intunewin" ".\IntuneOut\$PkgOutName" -Force
 }
 
 Remove-Item -Recurse .\tmp_pkg

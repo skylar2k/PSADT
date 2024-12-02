@@ -200,7 +200,7 @@ Try {
             }
         }
         ## <Perform Installation tasks here>
-        Execute-Process -Path "Archicad-28.0.0-NOR.exe" -Parameters "--mode unattended --desktopshortcut 0 --enableautomaticdownload 0 --eduSerialNumber $secrets.eduSerialNumber --eduUserID $secrets.eduUserID"
+        Execute-Process -Path "Archicad-28.0.0-NOR.exe" -Parameters ("--mode unattended --desktopshortcut 0 --enableautomaticdownload 0 --eduSerialNumber {0} --eduUserID {1}" -f $secrets.eduSerialNumber, $secrets.eduUserID)
 
         ##*===============================================
         ##* MARK: POST-INSTALLATION
@@ -240,10 +240,11 @@ Try {
         @{
             # Archicad Uninstaller
             "$ArchicadRoot\Uninstall.AC\Uninstall.exe"                                     = "--mode unattended";
+            # Leave components installed, so it doesn't mess with other installations.
             # License Manager Tool
-            "$envProgramFiles\$appVendor\License Manager Tool\Uninstall.LMT\Uninstall.exe" = "--mode unattended";
+            # "$envProgramFiles\$appVendor\License Manager Tool\Uninstall.LMT\Uninstall.exe" = "--mode unattended";
             # Wibukey
-            "$envProgramFilesX86\WIBUKEY\Setup\Setup64.exe"                                = "/RS:{00060000-0000-1004-8002-0000C06B5161}"
+            # "$envProgramFilesX86\WIBUKEY\Setup\Setup64.exe"                                = "/RS:{00060000-0000-1004-8002-0000C06B5161}"
         }.GetEnumerator() | ForEach-Object {
             if (-not (Test-Path $_.Key)) { return }
             Execute-Process -Path $_.Key -Parameters $_.Value
