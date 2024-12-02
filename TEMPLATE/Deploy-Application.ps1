@@ -121,7 +121,7 @@ Try {
     [String]$installName = ''
     [String]$installTitle = ''
 
-    $secrets = Get-Content SupportFiles/secrets.json | ConvertFrom-Json
+    $secrets = Get-Content "SupportFiles/secrets.json" | ConvertFrom-Json
 
     ##* Do not modify section below
     #region DoNotModify
