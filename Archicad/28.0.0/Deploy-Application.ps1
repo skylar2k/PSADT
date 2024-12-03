@@ -121,7 +121,7 @@ Try {
     [String]$installName = ''
     [String]$installTitle = ''
 
-    $secrets = Get-Content "SupportFiles/secrets.json" | ConvertFrom-Json
+    $secrets = Get-Content "$dirSupportFiles\secrets.json" | ConvertFrom-Json
 
     ##* Do not modify section below
     #region DoNotModify
@@ -200,7 +200,7 @@ Try {
             }
         }
         ## <Perform Installation tasks here>
-        Execute-Process -Path "Archicad-28.0.0-NOR.exe" -Parameters ("--mode unattended --desktopshortcut 0 --enableautomaticdownload 0 --eduSerialNumber {0} --eduUserID {1}" -f $secrets.eduSerialNumber, $secrets.eduUserID)
+        Execute-Process -Path "Archicad-28.0.0-NOR.exe" -Parameters "--eduSerialNumber ${secrets.SerialNumber} --eduUserID ${secrets.eduUserID} --mode unattended --desktopshortcut 0 --enableautomaticdownload 0"
 
         ##*===============================================
         ##* MARK: POST-INSTALLATION
