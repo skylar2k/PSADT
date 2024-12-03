@@ -19,7 +19,7 @@ $PkgVersionPath = Get-ChildItem $PkgApexPath -Attributes Directory | Invoke-Fzf
 if (-not $PkgVersionPath) { Exit }
 
 Copy-Item -Path $PkgVersionPath -Destination .\tmp_pkg -Recurse -Container
-sops.exe --config "~/.sops.yaml" decrypt .\tmp_pkg\SupportFiles\secrets.sops.json > .\tmp_pkg\SupportFiles\secrets.json
+sops.exe --config "$HOME\.sops.yaml" decrypt .\tmp_pkg\SupportFiles\secrets.sops.json > .\tmp_pkg\SupportFiles\secrets.json
 Remove-Item .\tmp_pkg\SupportFiles\secrets.sops.json
 
 # Package application if wanted
