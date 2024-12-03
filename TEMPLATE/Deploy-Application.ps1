@@ -40,8 +40,6 @@ Try {
     [String]$installName = ''
     [String]$installTitle = ''
 
-    $secrets = Get-Content "$dirSupportFiles\secrets.json" | ConvertFrom-Json
-
     ##* Do not modify section below
     #region DoNotModify
 
@@ -95,6 +93,7 @@ Try {
     ##*===============================================
     #endregion END VARIABLE DECLARATION
     ##*===============================================
+    $secrets = Get-Content "$dirSupportFiles\secrets.json" | ConvertFrom-Json
 
     If ($deploymentType -ine 'Uninstall' -and $deploymentType -ine 'Repair') {
         ##*===============================================
