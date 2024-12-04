@@ -107,7 +107,7 @@ Try {
         ##*===============================================
         [String]$installPhase = 'Installation'
         ## <Perform Installation tasks here>
-        Execute-Process -Path "Archicad-28.0.0-NOR.exe" -Parameters "--eduSerialNumber ${secrets.SerialNumber} --eduUserID ${secrets.eduUserID} --mode unattended --desktopshortcut 0 --enableautomaticdownload 0"
+        Execute-Process -Path "Archicad-28.0.0-NOR.exe" -Parameters "--eduSerialNumber $($secrets.eduSerialNumber) --eduUserID $($secrets.eduUserID) --mode unattended --desktopshortcut 0 --enableautomaticdownload 0"
 
         ##*===============================================
         ##* MARK: POST-INSTALLATION
