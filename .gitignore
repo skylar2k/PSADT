@@ -2,5 +2,7 @@
 tmp_pkg/
 IntuneOut/
 
+last-run.json
+
 !**/.keep
 !TEMPLATE/**

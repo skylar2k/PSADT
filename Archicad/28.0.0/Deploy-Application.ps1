@@ -124,7 +124,6 @@ Try {
         ## <Perform Pre-Uninstallation tasks here>
         Show-InstallationWelcome -CloseApps 'Archicad' -Silent
 
-
         ##*===============================================
         ##* MARK: UNINSTALLATION
         ##*===============================================
