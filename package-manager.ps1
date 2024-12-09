@@ -37,7 +37,7 @@ function Package-PSADT {
     $PkgPath = "$($RunConfig.PkgName)\$($RunConfig.PkgVersion)"
     Write-Output "Packaging $PkgPath"
     Write-Output "Cleaning up previous tmp files"
-    if (Test-Path ".\tmp_pkg") { Remove-Item -Recurse ".\tmp_pkg" }
+    if (Test-Path ".\tmp_pkg") { Remove-Item -Recurse ".\tmp_pkg" -Force }
     Write-Output "Copying package to .\tmp_pkg"
     Copy-Item -Path "$PkgPath" -Destination ".\tmp_pkg" -Recurse -Container
     Write-Output "Decrypting secrets.sops.json and storing it as secrets.json"
@@ -55,7 +55,7 @@ function New-IntuneWin {
     Write-Output "Renaming Deploy-Application.intunewin to $PkgOutName" 
     Move-Item ".\IntuneOut\Deploy-Application.intunewin" ".\IntuneOut\$PkgOutName" -Force
     Write-Output "Cleaning tmp files"
-    Remove-Item -Recurse ".\tmp_pkg"
+    Remove-Item -Recurse ".\tmp_pkg" -Force
 }
 
 Get-OperationMode
