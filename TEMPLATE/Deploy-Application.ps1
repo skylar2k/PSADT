@@ -100,19 +100,16 @@ Try {
         ##* MARK: PRE-INSTALLATION
         ##*===============================================
         [String]$installPhase = 'Pre-Installation'
-        ## <Perform Pre-Installation tasks here>
 
         ##*===============================================
         ##* MARK: INSTALLATION
         ##*===============================================
         [String]$installPhase = 'Installation'
-        ## <Perform Installation tasks here>
 
         ##*===============================================
         ##* MARK: POST-INSTALLATION
         ##*===============================================
         [String]$installPhase = 'Post-Installation'
-        ## <Perform Post-Installation tasks here>
 
     }
     ElseIf ($deploymentType -ieq 'Uninstall') {
@@ -120,19 +117,16 @@ Try {
         ##* MARK: PRE-UNINSTALLATION
         ##*===============================================
         [String]$installPhase = 'Pre-Uninstallation'
-        ## <Perform Pre-Uninstallation tasks here>
 
         ##*===============================================
         ##* MARK: UNINSTALLATION
         ##*===============================================
         [String]$installPhase = 'Uninstallation'
-        ## <Perform Uninstallation tasks here>
 
         ##*===============================================
         ##* MARK: POST-UNINSTALLATION
         ##*===============================================
         [String]$installPhase = 'Post-Uninstallation'
-        ## <Perform Post-Uninstallation tasks here>
 
     }
     ElseIf ($deploymentType -ieq 'Repair') {
@@ -140,19 +134,16 @@ Try {
         ##* MARK: PRE-REPAIR
         ##*===============================================
         [String]$installPhase = 'Pre-Repair'
-        ## <Perform Pre-Repair tasks here>
 
         ##*===============================================
         ##* MARK: REPAIR
         ##*===============================================
         [String]$installPhase = 'Repair'
-        ## <Perform Repair tasks here>
 
         ##*===============================================
         ##* MARK: POST-REPAIR
         ##*===============================================
         [String]$installPhase = 'Post-Repair'
-        ## <Perform Post-Repair tasks here>
 
     }
 

@@ -1,8 +1,13 @@
 **/Files/*
 tmp_pkg/
 IntuneOut/
+**/Assets
+**/Config
+**/Strings
+**/PSAppDeployToolkit*
 
 last-run.json
+Invoke-AppDeployToolkit.exe
 
 !**/.keep
-!TEMPLATE/**
+!TEMPLATE*/**
