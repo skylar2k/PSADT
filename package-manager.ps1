@@ -50,10 +50,10 @@ function Package-PSADT {
 
 function New-IntuneWin {
     Package-PSADT
-    IntuneWinAppUtil.exe -c (Resolve-Path "tmp_pkg").Path -s Deploy-Application.exe -o "IntuneOut" -q
+    IntuneWinAppUtil.exe -c (Resolve-Path "tmp_pkg").Path -s Invoke-AppDeployToolkit.exe -o "IntuneOut" -q
     $PkgOutName = "$($RunConfig.PkgName)-$($RunConfig.PkgVersion).intunewin"
-    Write-Output "Renaming Deploy-Application.intunewin to $PkgOutName" 
-    Move-Item ".\IntuneOut\Deploy-Application.intunewin" ".\IntuneOut\$PkgOutName" -Force
+    Write-Output "Renaming Invoke-AppDeployToolkit.intunewin to $PkgOutName" 
+    Move-Item ".\IntuneOut\Invoke-AppDeployToolkit.intunewin" ".\IntuneOut\$PkgOutName" -Force
     Write-Output "Cleaning tmp files"
     Remove-Item -Recurse ".\tmp_pkg" -Force
 }
