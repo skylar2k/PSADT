@@ -81,7 +81,7 @@ switch ($RunConfig.Mode) {
         }
         else { $RunConfig.PkgName = Read-Host "Package Name?" }
         $RunConfig.PkgVersion = Read-Host "Version number?"
-        Copy-Item -Path "TEMPLATE" -Destination "$($RunConfig.PkgName)\$($RunConfig.PkgVersion)" -Recurse -Container
+        Copy-Item -Path "TEMPLATEv4.0.3" -Destination "$($RunConfig.PkgName)\$($RunConfig.PkgVersion)" -Recurse -Container
         Write-Output "Created version ($($RunConfig.PkgVersion)) for $($RunConfig.PkgName)"
     }
 }
