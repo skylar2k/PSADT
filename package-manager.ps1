@@ -19,7 +19,7 @@ function Read-YesNoChoice {
 function Select-PackageAndVersion {
     param ([Parameter(Mandatory = $false)][Boolean]$SelectVersion = $true)
 
-    $PkgApexPath = Get-ChildItem . -Attributes Directory -Exclude tmp_pkg, IntuneOut, TEMPLATE | Invoke-Fzf
+    $PkgApexPath = Get-ChildItem . -Attributes Directory -Exclude tmp_pkg, IntuneOut, TEMPLATES | Invoke-Fzf
     if (-not $PkgApexPath) { exit }
     $RunConfig.PkgName = Split-Path $PkgApexPath -Leaf
     if ($SelectVersion) {
@@ -81,7 +81,7 @@ switch ($RunConfig.Mode) {
         }
         else { $RunConfig.PkgName = Read-Host "Package Name?" }
         $RunConfig.PkgVersion = Read-Host "Version number?"
-        Copy-Item -Path "TEMPLATEv4.0.6" -Destination "$($RunConfig.PkgName)\$($RunConfig.PkgVersion)" -Recurse -Container
+        Copy-Item -Path "TEMPLATES\4.0.6" -Destination "$($RunConfig.PkgName)\$($RunConfig.PkgVersion)" -Recurse -Container
         Write-Output "Created version ($($RunConfig.PkgVersion)) for $($RunConfig.PkgName)"
     }
 }
