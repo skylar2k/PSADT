@@ -29,13 +29,13 @@ $adtSession = @{
     AppVendor                   = 'FlashForge'
     AppName                     = 'FlashPrint 5'
     AppVersion                  = '5.8.7'
-    AppArch                     = 'x64'
+    AppArch                     = 'x86_64'
     AppLang                     = 'EN'
     AppRevision                 = '01'
     AppSuccessExitCodes         = @(0)
     AppRebootExitCodes          = @(1641, 3010)
     AppScriptVersion            = '1.0.0'
-    AppScriptDate               = '10-12-2024'
+    AppScriptDate               = '2025-03-06'
     AppScriptAuthor             = 'Skylar Johansen'
 
     # Install Titles (Only set here to override defaults set by the toolkit).
@@ -44,15 +44,8 @@ $adtSession = @{
 
     # Script variables.
     DeployAppScriptFriendlyName = $MyInvocation.MyCommand.Name
-    DeployAppScriptVersion      = '4.0.3'
+    DeployAppScriptVersion      = '4.0.6'
     DeployAppScriptParameters   = $PSBoundParameters
-
-    # Script parameters.
-    DeploymentType              = $DeploymentType
-    DeployMode                  = $DeployMode
-    AllowRebootPassThru         = $AllowRebootPassThru
-    TerminalServerMode          = $TerminalServerMode
-    DisableLogging              = $DisableLogging
 }
 
 $global:secrets = $null
@@ -63,7 +56,7 @@ function Install-ADTDeployment {
     ##================================================
     $adtSession.InstallPhase = "Pre-$($adtSession.DeploymentType)"
     $installPath = "$envProgramFiles\FlashForge\FlashPrint 5\"
-    New-ADTFolder "$envProgramFiles\FlashForge"
+    New-ADTFolder -Path "$envProgramFiles\FlashForge"
 
     ##================================================
     ## MARK: Install
@@ -81,13 +74,14 @@ function Install-ADTDeployment {
     ## MARK: Post-Install
     ##================================================
     $adtSession.InstallPhase = "Post-$($adtSession.DeploymentType)"
-    $shell = New-Object -ComObject WScript.Shell
-    $shortcut = $shell.CreateShortcut("$envCommonStartMenuPrograms\$appName.lnk")
-    $shortcut.TargetPath = "$installPath\FlashPrint.exe"
-    $shortcut.IconLocation = "$installPath\FlashPrint.exe"
-    $shortcut.WorkingDirectory = "$env:HomeDrive\$env:HomePath"
-    $shortcut.Save()
-    Set-ADTRegistryKey -Key "HKLM\SOFTWARE\MRFK\$appVendor\$appName\$appVersion"
+    $shortcutParams = @{
+        'Path'             = "$envCommonStartMenuPrograms\$($adtSession.AppName).lnk"
+        'TargetPath'       = "$installPath\FlashPrint.exe"
+        'IconLocation'     = "$installPath\FlashPrint.exe"
+        'WorkingDirectory' = "$env:HomeDrive\$env:HomePath"
+    }
+    New-ADTShortcut @shortcutParams
+    Set-ADTRegistryKey -Key "HKLM\SOFTWARE\MRFK\$($adtSession.AppVendor)\$($adtSession.AppName)\Version" -Value $adtSession.AppVersion
 
 }
 
@@ -96,7 +90,6 @@ function Uninstall-ADTDeployment {
     ## MARK: Pre-Uninstall
     ##================================================
     $adtSession.InstallPhase = "Pre-$($adtSession.DeploymentType)"
-    $installPath = "$envProgramFiles\FlashForge\FlashPrint 5\"
     Show-ADTInstallationWelcome -CloseProcesses "flashprint" -Silent
 
     ##================================================
@@ -110,8 +103,7 @@ function Uninstall-ADTDeployment {
     ## MARK: Post-Uninstallation
     ##================================================
     $adtSession.InstallPhase = "Post-$($adtSession.DeploymentType)"
-    Remove-ADTFile -Path "$envCommonStartMenuPrograms\$appName.lnk"
-    Remove-ADTRegistryKey -Key "HKLM\SOFTWARE\MRFK\$appVendor\$appName\$appVersion"
+    Set-ADTRegistryKey -Key "HKLM\SOFTWARE\MRFK\$($adtSession.AppVendor)\$($adtSession.AppName)\Version"
 
 }
 
@@ -146,15 +138,16 @@ Set-StrictMode -Version 1
 # Import the module and instantiate a new session.
 try {
     $moduleName = if ([System.IO.File]::Exists("$PSScriptRoot\PSAppDeployToolkit\PSAppDeployToolkit.psd1")) {
-        Get-ChildItem -LiteralPath $PSScriptRoot\PSAppDeployToolkit -Recurse -File | Unblock-File -ErrorAction SilentlyContinue
+        Get-ChildItem -LiteralPath $PSScriptRoot\PSAppDeployToolkit -Recurse -File | Unblock-File -ErrorAction Ignore
         "$PSScriptRoot\PSAppDeployToolkit\PSAppDeployToolkit.psd1"
     }
     else {
         'PSAppDeployToolkit'
     }
-    Import-Module -FullyQualifiedName @{ ModuleName = $moduleName; Guid = '8c3c366b-8606-4576-9f2d-4051144f7ca2'; ModuleVersion = '4.0.3' } -Force
+    Import-Module -FullyQualifiedName @{ ModuleName = $moduleName; Guid = '8c3c366b-8606-4576-9f2d-4051144f7ca2'; ModuleVersion = '4.0.6' } -Force
     try {
-        $adtSession = Open-ADTSession -SessionState $ExecutionContext.SessionState @adtSession -PassThru
+        $iadtParams = Get-ADTBoundParametersAndDefaultValues -Invocation $MyInvocation
+        $adtSession = Open-ADTSession -SessionState $ExecutionContext.SessionState @adtSession @iadtParams -PassThru
         $secrets = Get-Content "$($adtSession.dirSupportFiles)\secrets.json" | ConvertFrom-Json
     }
     catch {
@@ -173,9 +166,11 @@ catch {
 ##================================================
 
 try {
-    if ([System.IO.File]::Exists("$PSScriptRoot\PSAppDeployToolkit.Extensions\PSAppDeployToolkit.Extensions.psd1")) {
-        Get-ChildItem -LiteralPath $PSScriptRoot\PSAppDeployToolkit.Extensions -Recurse -File | Unblock-File
-        Import-Module -FullyQualifiedName @{ ModuleName = "$PSScriptRoot\PSAppDeployToolkit.Extensions\PSAppDeployToolkit.Extensions.psd1"; Guid = '55276a4c-9fbb-49a4-8481-159113757c39'; ModuleVersion = '4.0.3' } -Force
+    Get-Item -Path $PSScriptRoot\PSAppDeployToolkit.* | & {
+        process {
+            Get-ChildItem -LiteralPath $_.FullName -Recurse -File | Unblock-File -ErrorAction Ignore
+            Import-Module -Name $_.FullName -Force
+        }
     }
     & "$($adtSession.DeploymentType)-ADTDeployment"
     Close-ADTSession

@@ -164,4 +164,3 @@ catch {
 finally {
     Remove-Module -Name PSAppDeployToolkit* -Force
 }
-
