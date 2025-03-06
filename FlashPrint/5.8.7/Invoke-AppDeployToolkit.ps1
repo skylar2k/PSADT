@@ -81,7 +81,7 @@ function Install-ADTDeployment {
         'WorkingDirectory' = "$env:HomeDrive\$env:HomePath"
     }
     New-ADTShortcut @shortcutParams
-    Set-ADTRegistryKey -Key "HKLM\SOFTWARE\MRFK\$($adtSession.AppVendor)\$($adtSession.AppName)\Version" -Value $adtSession.AppVersion
+    Set-ADTRegistryKey -Key "HKLM\SOFTWARE\MRFK\$($adtSession.AppVendor)\$($adtSession.AppName)" -Name 'Version' -Value $adtSession.AppVersion
 
 }
 
@@ -103,7 +103,7 @@ function Uninstall-ADTDeployment {
     ## MARK: Post-Uninstallation
     ##================================================
     $adtSession.InstallPhase = "Post-$($adtSession.DeploymentType)"
-    Set-ADTRegistryKey -Key "HKLM\SOFTWARE\MRFK\$($adtSession.AppVendor)\$($adtSession.AppName)\Version"
+    Remove-ADTRegistryKey -Key "HKLM\SOFTWARE\MRFK\$($adtSession.AppVendor)\$($adtSession.AppName)" -Name 'Version'
 
 }
 
