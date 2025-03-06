@@ -68,13 +68,15 @@ function Install-ADTDeployment {
     ## MARK: Post-Install
     ##================================================
     $adtSession.InstallPhase = "Post-$($adtSession.DeploymentType)"
-    Invoke-ADTAllUsersRegistryAction { @{
+    Invoke-ADTAllUsersRegistryAction {
+        $sid = $_.SID
+        @{
             "License System"    = @("DWORD", "3")
             "License System NP" = @("DWORD", "3")
             "Language"          = @("String", "Nor")
             "Current Config"    = @("String", "Norway")
         } | % GetEnumerator | % {
-            Set-ADTRegistryKey -Key "HKCU\Software\Trimble\Novapoint\$($adtSession.AppVersion)\NP_Acad\Kernel Services" -Name $_.key -Type $_.value[0] -Value $_.value[1]
+            Set-ADTRegistryKey -Key "HKCU\Software\Trimble\Novapoint\$($adtSession.AppVersion)\NP_Acad\Kernel Services" -Name $_.key -Type $_.value[0] -Value $_.value[1] -SID $sid
         }
     }
 }
