@@ -27,17 +27,17 @@ param
 ##================================================
 $adtSession = @{
     # App variables.
-    AppVendor                   = ''
-    AppName                     = ''
-    AppVersion                  = ''
-    AppArch                     = ''
+    AppVendor                   = 'StruSoft'
+    AppName                     = 'FEM-Design'
+    AppVersion                  = '24.00.003'
+    AppArch                     = 'x86_64'
     AppLang                     = 'EN'
     AppRevision                 = '01'
     AppSuccessExitCodes         = @(0)
     AppRebootExitCodes          = @(1641, 3010)
-    AppProcessesToClose         = @()  # Example: @('excel', @{ Name = 'winword'; Description = 'Microsoft Word' })
+    AppProcessesToClose         = @('femdesign', 'fd3dstruct', 'fdsec', 'fdplate', 'fd3dparametricmodel', 'fdsjoint')
     AppScriptVersion            = '1.0.0'
-    AppScriptDate               = '2025-09-07' # YYYY-MM-DD
+    AppScriptDate               = '2025-09-08'
     AppScriptAuthor             = 'Skylar R. Johansen'
     RequireAdmin                = $true
 
@@ -64,26 +64,34 @@ function Install-ADTDeployment {
     $saiwParams = @{
         AllowDefer              = $false
         PersistPrompt           = $true
-        CloseProcessesCountdown = 120
+        CloseProcessesCountdown = 60
     }
     if ($adtSession.AppProcessesToClose.Count -gt 0) {
         $saiwParams.Add('CloseProcesses', $adtSession.AppProcessesToClose)
     }
     Show-ADTInstallationWelcome @saiwParams
     ## <Perform Pre-Installation tasks here>
+    Uninstall-ADTApplication -ApplicationType 'MSI' -Name 'FEM-Design' # Uninstall anything with FEM-Design in DisplayName
 
     ##================================================
     ## MARK: Install
     ##================================================
     $adtSession.InstallPhase = $adtSession.DeploymentType
     ## <Perform Installation tasks here>
+    Start-ADTMsiProcess -Action 'Install' -FilePath 'fem-design_24.00.003__core.msi' -ArgumentList @(
+        '/qn',
+        'DISABLEAUTOUPDATE=1'
+    )
+    # Point to correct license server
+    Invoke-ADTAllUsersRegistryAction -ScriptBlock {
+        Set-ADTRegistryKey -Key "HKCU\Software\FLEXlm License Manager" -Name "STRUSOFT_LICENSE_FILE" -Type String -Value "@Lisens04" -SID $_.SID
+    }
 
     ##================================================
     ## MARK: Post-Install
     ##================================================
     $adtSession.InstallPhase = "Post-$($adtSession.DeploymentType)"
     ## <Perform Post-Installation tasks here>
-
 }
 
 function Uninstall-ADTDeployment {
@@ -97,22 +105,25 @@ function Uninstall-ADTDeployment {
     ##================================================
     $adtSession.InstallPhase = "Pre-$($adtSession.DeploymentType)"
     if ($adtSession.AppProcessesToClose.Count -gt 0) {
-        Show-ADTInstallationWelcome -CloseProcesses $adtSession.AppProcessesToClose -CloseProcessesCountdown 120
+        Show-ADTInstallationWelcome -CloseProcesses $adtSession.AppProcessesToClose -CloseProcessesCountdown 60
     }
     ## <Perform Pre-Uninstallation tasks here>
+    Start-ADTMsiProcess -Action 'Uninstall' -FilePath 'fem-design_24.00.003__core.msi' -ArgumentList '/qn'
 
     ##================================================
     ## MARK: Uninstall
     ##================================================
     $adtSession.InstallPhase = $adtSession.DeploymentType
     ## <Perform Uninstallation tasks here>
+    Invoke-ADTAllUsersRegistryAction -ScriptBlock {
+        Remove-ADTRegistryKey -Key "HKCU\Software\FLEXlm License Manager" -Name "STRUSOFT_LICENSE_FILE" -SID $_.SID
+    }
 
     ##================================================
     ## MARK: Post-Uninstallation
     ##================================================
     $adtSession.InstallPhase = "Post-$($adtSession.DeploymentType)"
     ## <Perform Post-Uninstallation tasks here>
-
 }
 
 function Repair-ADTDeployment {
@@ -138,7 +149,6 @@ function Repair-ADTDeployment {
     ##================================================
     $adtSession.InstallPhase = "Post-$($adtSession.DeploymentType)"
     ## <Perform Post-Repair tasks here>
-
 }
 
 

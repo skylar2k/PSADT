@@ -27,17 +27,17 @@ param
 ##================================================
 $adtSession = @{
     # App variables.
-    AppVendor                   = ''
-    AppName                     = ''
-    AppVersion                  = ''
-    AppArch                     = ''
+    AppVendor                   = 'Autodesk'
+    AppName                     = 'RealDWG'
+    AppVersion                  = '23.1.3'
+    AppArch                     = 'x86_64'
     AppLang                     = 'EN'
     AppRevision                 = '01'
     AppSuccessExitCodes         = @(0)
     AppRebootExitCodes          = @(1641, 3010)
     AppProcessesToClose         = @()  # Example: @('excel', @{ Name = 'winword'; Description = 'Microsoft Word' })
     AppScriptVersion            = '1.0.0'
-    AppScriptDate               = '2025-09-07' # YYYY-MM-DD
+    AppScriptDate               = '2025-09-08'
     AppScriptAuthor             = 'Skylar R. Johansen'
     RequireAdmin                = $true
 
@@ -61,29 +61,22 @@ function Install-ADTDeployment {
     ## MARK: Pre-Install
     ##================================================
     $adtSession.InstallPhase = "Pre-$($adtSession.DeploymentType)"
-    $saiwParams = @{
-        AllowDefer              = $false
-        PersistPrompt           = $true
-        CloseProcessesCountdown = 120
-    }
-    if ($adtSession.AppProcessesToClose.Count -gt 0) {
-        $saiwParams.Add('CloseProcesses', $adtSession.AppProcessesToClose)
-    }
-    Show-ADTInstallationWelcome @saiwParams
+    if ($adtSession.AppProcessesToClose.Count -gt 0) {}
     ## <Perform Pre-Installation tasks here>
+
 
     ##================================================
     ## MARK: Install
     ##================================================
     $adtSession.InstallPhase = $adtSession.DeploymentType
     ## <Perform Installation tasks here>
+    Start-ADTMsiProcess -Action 'Install' -FilePath "realdwg_standalone_msi.msi"
 
     ##================================================
     ## MARK: Post-Install
     ##================================================
     $adtSession.InstallPhase = "Post-$($adtSession.DeploymentType)"
     ## <Perform Post-Installation tasks here>
-
 }
 
 function Uninstall-ADTDeployment {
@@ -96,23 +89,24 @@ function Uninstall-ADTDeployment {
     ## MARK: Pre-Uninstall
     ##================================================
     $adtSession.InstallPhase = "Pre-$($adtSession.DeploymentType)"
-    if ($adtSession.AppProcessesToClose.Count -gt 0) {
-        Show-ADTInstallationWelcome -CloseProcesses $adtSession.AppProcessesToClose -CloseProcessesCountdown 120
-    }
+
+    if ($adtSession.AppProcessesToClose.Count -gt 0) {}
     ## <Perform Pre-Uninstallation tasks here>
+
 
     ##================================================
     ## MARK: Uninstall
     ##================================================
     $adtSession.InstallPhase = $adtSession.DeploymentType
     ## <Perform Uninstallation tasks here>
+    Start-ADTMsiProcess -Action 'Uninstall' -FilePath "realdwg_standalone_msi.msi"
 
     ##================================================
     ## MARK: Post-Uninstallation
     ##================================================
     $adtSession.InstallPhase = "Post-$($adtSession.DeploymentType)"
-    ## <Perform Post-Uninstallation tasks here>
 
+    ## <Perform Post-Uninstallation tasks here>
 }
 
 function Repair-ADTDeployment {
@@ -127,18 +121,20 @@ function Repair-ADTDeployment {
     $adtSession.InstallPhase = "Pre-$($adtSession.DeploymentType)"
     ## <Perform Pre-Repair tasks here>
 
+
     ##================================================
     ## MARK: Repair
     ##================================================
     $adtSession.InstallPhase = $adtSession.DeploymentType
     ## <Perform Repair tasks here>
 
+
     ##================================================
     ## MARK: Post-Repair
     ##================================================
     $adtSession.InstallPhase = "Post-$($adtSession.DeploymentType)"
-    ## <Perform Post-Repair tasks here>
 
+    ## <Perform Post-Repair tasks here>
 }
 
 
