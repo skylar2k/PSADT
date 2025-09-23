@@ -1,13 +1,18 @@
-**/Files/*
+# Directories
 tmp_pkg/
-IntuneOut/
+**/Files/*
 **/Assets
 **/Config
 **/Strings
 **/PSAppDeployToolkit*
 
-last-run.json
+# Files
+.sops.yaml
+*.intunewin
 Invoke-AppDeployToolkit.exe
+# Decrypted SOPS files
+.decrypted~*
 
+# Keep these files
 !**/.keep
 !TEMPLATE*/**

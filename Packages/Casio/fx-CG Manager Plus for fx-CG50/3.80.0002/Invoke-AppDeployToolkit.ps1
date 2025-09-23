@@ -21,22 +21,23 @@ param
     [System.Management.Automation.SwitchParameter]$DisableLogging
 )
 
+
 ##================================================
 ## MARK: Variables
 ##================================================
 $adtSession = @{
     # App variables.
-    AppVendor                   = ''
-    AppName                     = ''
-    AppVersion                  = ''
-    AppArch                     = ''
+    AppVendor                   = 'Casio'
+    AppName                     = 'fx-CG Manager Plus for fx-CG50'
+    AppVersion                  = '3.80.0002'
+    AppArch                     = 'x86'
     AppLang                     = 'EN'
     AppRevision                 = '01'
     AppSuccessExitCodes         = @(0)
     AppRebootExitCodes          = @(1641, 3010)
-    AppProcessesToClose         = @()  # Example: @('excel', @{ Name = 'winword'; Description = 'Microsoft Word' })
+    AppProcessesToClose         = @("fx-CG_Manager_PLUS_Subscription_for_fx-CG50series")  # Example: @('excel', @{ Name = 'winword'; Description = 'Microsoft Word' })
     AppScriptVersion            = '1.0.0'
-    AppScriptDate               = '2025-09-07' # YYYY-MM-DD
+    AppScriptDate               = '2025-09-15' # YYYY-MM-DD
     AppScriptAuthor             = 'Skylar R. Johansen'
     RequireAdmin                = $true
 
@@ -51,6 +52,7 @@ $adtSession = @{
 }
 
 $Global:secrets = $null
+
 function Install-ADTDeployment {
     [CmdletBinding()]
     param
@@ -61,15 +63,6 @@ function Install-ADTDeployment {
     ## MARK: Pre-Install
     ##================================================
     $adtSession.InstallPhase = "Pre-$($adtSession.DeploymentType)"
-    #$saiwParams = @{
-    #    AllowDefer              = $false
-    #    PersistPrompt           = $true
-    #    CloseProcessesCountdown = 120
-    #}
-    if ($adtSession.AppProcessesToClose.Count -gt 0) {
-        $saiwParams.Add('CloseProcesses', $adtSession.AppProcessesToClose)
-    }
-    Show-ADTInstallationWelcome @saiwParams
     ## <Perform Pre-Installation tasks here>
 
     ##================================================
@@ -77,12 +70,18 @@ function Install-ADTDeployment {
     ##================================================
     $adtSession.InstallPhase = $adtSession.DeploymentType
     ## <Perform Installation tasks here>
+    Start-ADTProcess -FilePath "software.exe" -ArgumentList @(
+        '/l 1044',
+        '/S',
+        "/v /qn ISX_EID=$($Global:secrets.ISX_EID)"
+    )
 
     ##================================================
     ## MARK: Post-Install
     ##================================================
     $adtSession.InstallPhase = "Post-$($adtSession.DeploymentType)"
     ## <Perform Post-Installation tasks here>
+    Remove-ADTFile -LiteralPath "$envCommonDesktop\fx-CG Manager PLUS Subscription for fx-CG50series.lnk"
 
 }
 
@@ -106,6 +105,7 @@ function Uninstall-ADTDeployment {
     ##================================================
     $adtSession.InstallPhase = $adtSession.DeploymentType
     ## <Perform Uninstallation tasks here>
+    Uninstall-ADTApplication -Name 'fx-CG Manager PLUS Subscription for fx-CG50series' -ApplicationType 'MSI'
 
     ##================================================
     ## MARK: Post-Uninstallation
