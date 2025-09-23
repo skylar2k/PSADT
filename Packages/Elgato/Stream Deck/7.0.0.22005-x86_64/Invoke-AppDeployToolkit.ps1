@@ -26,17 +26,17 @@ param
 ##================================================
 $adtSession = @{
     # App variables.
-    AppVendor                   = ''
-    AppName                     = ''
-    AppVersion                  = ''
-    AppArch                     = ''
+    AppVendor                   = 'Elgato'
+    AppName                     = 'Stream Deck'
+    AppVersion                  = '7.0.0.22005'
+    AppArch                     = 'x86_64'
     AppLang                     = 'EN'
     AppRevision                 = '01'
     AppSuccessExitCodes         = @(0)
     AppRebootExitCodes          = @(1641, 3010)
-    AppProcessesToClose         = @()  # Example: @('excel', @{ Name = 'winword'; Description = 'Microsoft Word' })
+    AppProcessesToClose         = @('StreamDeck')  # Example: @('excel', @{ Name = 'winword'; Description = 'Microsoft Word' })
     AppScriptVersion            = '1.0.0'
-    AppScriptDate               = '2025-09-07' # YYYY-MM-DD
+    AppScriptDate               = '2025-09-23' # YYYY-MM-DD
     AppScriptAuthor             = 'Skylar R. Johansen'
     RequireAdmin                = $true
 
@@ -71,18 +71,21 @@ function Install-ADTDeployment {
         Show-ADTInstallationWelcome @saiwParams
     }
     ## <Perform Pre-Installation tasks here>
+    Uninstall-ADTApplication -Name 'Elgato Stream Deck' -ApplicationType 'MSI'
 
     ##================================================
     ## MARK: Install
     ##================================================
     $adtSession.InstallPhase = $adtSession.DeploymentType
     ## <Perform Installation tasks here>
+    Start-ADTMsiProcess -FilePath "Stream_Deck_7.0.0.22005.msi" -ArgumentList "/qn /norestart"
 
     ##================================================
     ## MARK: Post-Install
     ##================================================
     $adtSession.InstallPhase = "Post-$($adtSession.DeploymentType)"
     ## <Perform Post-Installation tasks here>
+    Remove-ADTFile -LiteralPath "$envCommonDesktop\Stream Deck.lnk"
 
 }
 
@@ -106,6 +109,7 @@ function Uninstall-ADTDeployment {
     ##================================================
     $adtSession.InstallPhase = $adtSession.DeploymentType
     ## <Perform Uninstallation tasks here>
+    Uninstall-ADTApplication -Name 'Elgato Stream Deck' -ApplicationType 'MSI'
 
     ##================================================
     ## MARK: Post-Uninstallation
